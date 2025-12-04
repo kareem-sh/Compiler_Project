@@ -1,10 +1,13 @@
 lexer grammar SqlLexer;
 
+options {
+    caseInsensitive = true;
+}
+
 // ===== FRAGMENTS =====
 fragment DIGIT : [0-9];
-fragment LETTER : [a-zA-Z_];
-fragment HEXDIGIT : [0-9A-Fa-f];
-
+fragment LETTER : [A-Z_];
+fragment HEXDIGIT : [0-9A-F];
 
 ADD : 'ADD';
 EXTERNAL : 'EXTERNAL';
@@ -191,18 +194,25 @@ INT_LITERAL    : DIGIT+;
 FLOAT_LITERAL  : DIGIT+ '.' DIGIT+;
 HEX_LITERAL    : '0x' HEXDIGIT+;
 BIT_LITERAL    : '0b' [01]+;
+TRUE_LITERAL  : 'TRUE';
+FALSE_LITERAL : 'FALSE';
+
 
 STRING_LITERAL
-    : '\'' ( ~['\\\r\n] | '\\' . | '\\' [ \t]* '\r'? '\n' [ \t]* )* '\''
+    : '\''
+      ( ~['\\]| '\\' .| '\'\''| '\\' [ \t]* '\r'? '\n' [ \t]*)*'\''
       {
           import re
-          # Python raw string for regex pattern
+          # replace line-continuation backslashes with space
           self.text = re.sub(r'\\[ \t]*\r?\n[ \t]*', ' ', self.text)
       }
     ;
 
+BRACKET_IDENTIFIER : '[' (~[\]\r\n])* ']';
 IDENTIFIER : LETTER (LETTER | DIGIT)*;
 
+    
+   
 
 USER_VAR : '@' IDENTIFIER;
 
@@ -222,6 +232,8 @@ COMMA: ',';
 DOT  : '.';
 LPAREN: '(';
 RPAREN: ')';
+SPAREN: '[';
+ZPAREN: ']';
 SEMI: ';';
 
 

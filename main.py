@@ -9,7 +9,12 @@ def tokenize(code):
     for token in tokens:
         print(f"Token: {lexer.symbolicNames[token.type]}, Text: {token.text}")
 
-sql = "SELECT name, age FROM users;"
+def tokenize_file(path):
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+    tokenize(content)
+
+sql = "SELECT name, age FROM users WHERE age>10;"
 sql2 = "SELECT 'It''s a beautiful day' AS msg;"
 sql3 = r"SELECT 'abc\
 def' AS test;"
@@ -19,4 +24,5 @@ sql6 = """DECLARE @x INT;
 SELECT @x;"""
 sql7 = "SELECT 0xabc\
 def AS Name;"
-tokenize(sql3)
+# tokenize(sql)
+tokenize_file("testing.sql")
