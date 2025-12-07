@@ -185,12 +185,14 @@ PRECISION : 'PRECISION';
 WRITETEXT : 'WRITETEXT';
 EXECUTE : 'EXECUTE';
 PRIMARY : 'PRIMARY';
+INT : 'INTEGER';
 
 
 INT_LITERAL    : DIGIT+;
 FLOAT_LITERAL  : DIGIT+ '.' DIGIT+;
-HEX_LITERAL    : '0x' HEXDIGIT+;
+HEX_LITERAL    : '0x' +;
 BIT_LITERAL    : '0b' [01]+;
+
 
 STRING_LITERAL
     : '\'' ( ~['\\\r\n] | '\\' . | '\\' [ \t]* '\r'? '\n' [ \t]* )* '\''
@@ -222,13 +224,15 @@ COMMA: ',';
 DOT  : '.';
 LPAREN: '(';
 RPAREN: ')';
+SPAREN: '[';
+ZPAREN: ']';
 SEMI: ';';
 
 
-LINE_COMMENT : '--' ~[\r\n]* -> skip;
+LINE_COMMENT : '--' ~[\r\n]*;
 
 COMMENT
-    : '/*' (COMMENT | .)*? '*/' -> skip;
+    : '/*' (COMMENT | .)*? '*/';
 
 
 WS : [ \t\r\n]+ -> skip;

@@ -1,28 +1,3 @@
-from antlr4 import *
-from SqlLexer import SqlLexer
-import os
-
-def tokenize(code):
-    input_stream = InputStream(code)
-    lexer = SqlLexer(input_stream)
-    tokens = lexer.getAllTokens()
-
-    for token in tokens:
-        print(f"Token: {lexer.symbolicNames[token.type]}, Text: {token.text}")
-
-sql = "SELECT name, age FROM users;"
-sql3 = r"SELECT 'abc\
-def' AS test;"
-sql4 = """/* comment 
-/* nested */
-*/ SELECT * FROM table1;"""
-sql5 = "SELECT 0xFF, 0b1101;"
-sql6 = """DECLARE @x INT;
-SELECT @x;"""
-sql7 = "SELECT 0xabc\
-def AS Name;"
-sql8= "SELECT * WHERE name = 'Karim'"
-sql9 = r"""
 
 CREATE TABLE [dbo].[DIAGNOSIS](
 	[DIAGNOSIS_KEY'1] [int] NOT NULL,
@@ -120,31 +95,3 @@ BEGIN CATCH
     SELECT @ErrorMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE()      
     --RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState)         
 END CATCH
-"""
-
-sql10="""
-IF NOT EXISTS (
-    SELECT 1 FROM sys.columns
-    WHERE Name = 'KEY1''S'
-      AND Object_ID = Object_ID('FACT1')
-)
-BEGIN
-		ALTER TABLE FACT1 
-        ADD [KEY1'S] INT NULL;
-END
-GO
-"""
-
-sql11="""
-IF NOT EXISTS (
-    SELECT 1 FROM sys.columns 
-    WHERE Name = 'DIAGNOSIS_KEY''1' 
-      AND Object_ID = Object_ID('FACT_2')
-)
-BEGIN
-    ALTER TABLE FACT_2 
-    ADD [DIAGNOSIS_KEY'1] INT NULL;
-END
-GO
-"""
-tokenize(sql4)
