@@ -22,10 +22,20 @@ def tokenize(code):
     for token in tokens:
         print(f"Token: {lexer.symbolicNames[token.type]}, Text: {token.text}")
 
-# Example usage:
-# Read from a SQL file
-tokenize_from_file('test.sql')
+def tokenize_file(path):
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+    tokenize(content)
 
-# Or tokenize a direct string
-sql_string = "SELECT * FROM users;"
-tokenize(sql_string)
+sql = "SELECT name, age FROM users WHERE age>10;"
+sql2 = "SELECT 'It''s a beautiful day' AS msg;"
+sql3 = r"SELECT 'abc\
+def' AS test;"
+sql4 = "/* comment /* nested */ */ SELECT * FROM table1;"
+sql5 = "SELECT 0xFF, 0b1101;"
+sql6 = """DECLARE @x INT;
+SELECT @x;"""
+sql7 = "SELECT 0xabc\
+def AS Name;"
+# tokenize(sql)
+tokenize_file("testing.sql")
