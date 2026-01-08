@@ -1,41 +1,60 @@
 from antlr4 import *
 from SqlLexer import SqlLexer
-import os
+from SqlParser import SqlParser
+from antlr4.tree.Trees import Trees
 
-def tokenize_from_file(filepath):
-    """Read SQL from a file and tokenize it"""
-    try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            sql_code = f.read()
-        tokenize(sql_code)
-    except FileNotFoundError:
-        print(f"Error: File '{filepath}' not found.")
-    except Exception as e:
-        print(f"Error reading file: {e}")
 
-def tokenize(code):
-    """Tokenize SQL code"""
+def parse_sql(code: str):
+    print("========== SQL INPUT ==========")
+    print(code)
+    print("================================\n")
+
+    # 1) Input stream
     input_stream = InputStream(code)
+
+    # 2) Lexer
     lexer = SqlLexer(input_stream)
-    tokens = lexer.getAllTokens()
 
-    for token in tokens:
-        print(f"Token: {lexer.symbolicNames[token.type]}, Text: {token.text}")
+    # 3) Token stream
+    token_stream = CommonTokenStream(lexer)
+    token_stream.fill()
 
-def tokenize_file(path):
+    print("========== TOKENS ==========")
+    for token in token_stream.tokens:
+        if token.type != Token.EOF:
+            print(f"{lexer.symbolicNames[token.type]:<20} -> {token.text}")
+    print("=============================\n")
+
+    # 4) Parser
+    parser = SqlParser(token_stream)
+
+    # Start rule (مهم جدًا)
+    tree = parser.sqlFile()
+
+    print("========== PARSE TREE ==========")
+    print(Trees.toStringTree(tree, None, parser))
+    print("================================\n")
+
+
+def parse_file(path: str):
     with open(path, "r", encoding="utf-8") as f:
-        content = f.read()
-    tokenize(content)
+        parse_sql(f.read())
 
-sql = "SELECT name, age FROM users WHERE age>10;"
+
+# ===========================
+# TEST CASES
+# ===========================
+
+sql1 = "SELECT name, age FROM users WHERE age > 10;"
 sql2 = "SELECT 'It''s a beautiful day' AS msg;"
-sql3 = r"SELECT 'abc\
-def' AS test;"
-sql4 = "/* comment /* nested */ */ SELECT * FROM table1;"
-sql5 = "SELECT 0xFF, 0b1101;"
-sql6 = """DECLARE @x INT;
-SELECT @x;"""
-sql7 = "SELECT 0xabc\
-def AS Name;"
-# tokenize(sql)
-tokenize_file("testing.sql")
+sql3 = "SELECT * FROM users INNER JOIN orders ON users.id = orders.user_id;"
+sql4 = """
+WITH t AS (SELECT id FROM users)
+SELECT * FROM t ORDER BY id DESC;
+"""
+
+# Parse directly
+# parse_sql(sql1)
+
+# Or from file
+parse_file("testing.sql")
