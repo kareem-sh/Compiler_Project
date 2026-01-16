@@ -1,4 +1,4 @@
-# Generated from SqlParser.g4 by ANTLR 4.13.1
+# Generated from SqlParser.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .SqlParser import SqlParser
@@ -197,12 +197,84 @@ class SqlParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SqlParser#assignmentExpression.
+    def enterAssignmentExpression(self, ctx:SqlParser.AssignmentExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#assignmentExpression.
+    def exitAssignmentExpression(self, ctx:SqlParser.AssignmentExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#additiveExpression.
+    def enterAdditiveExpression(self, ctx:SqlParser.AdditiveExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#additiveExpression.
+    def exitAdditiveExpression(self, ctx:SqlParser.AdditiveExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#multiplicativeExpression.
+    def enterMultiplicativeExpression(self, ctx:SqlParser.MultiplicativeExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#multiplicativeExpression.
+    def exitMultiplicativeExpression(self, ctx:SqlParser.MultiplicativeExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#unaryExpression.
+    def enterUnaryExpression(self, ctx:SqlParser.UnaryExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#unaryExpression.
+    def exitUnaryExpression(self, ctx:SqlParser.UnaryExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#primaryExpression.
+    def enterPrimaryExpression(self, ctx:SqlParser.PrimaryExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#primaryExpression.
+    def exitPrimaryExpression(self, ctx:SqlParser.PrimaryExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#caseExpression.
+    def enterCaseExpression(self, ctx:SqlParser.CaseExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#caseExpression.
+    def exitCaseExpression(self, ctx:SqlParser.CaseExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#whenClause.
+    def enterWhenClause(self, ctx:SqlParser.WhenClauseContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#whenClause.
+    def exitWhenClause(self, ctx:SqlParser.WhenClauseContext):
+        pass
+
+
     # Enter a parse tree produced by SqlParser#literal.
     def enterLiteral(self, ctx:SqlParser.LiteralContext):
         pass
 
     # Exit a parse tree produced by SqlParser#literal.
     def exitLiteral(self, ctx:SqlParser.LiteralContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#functionCall.
+    def enterFunctionCall(self, ctx:SqlParser.FunctionCallContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#functionCall.
+    def exitFunctionCall(self, ctx:SqlParser.FunctionCallContext):
         pass
 
 
@@ -269,12 +341,30 @@ class SqlParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SqlParser#nullability.
+    def enterNullability(self, ctx:SqlParser.NullabilityContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#nullability.
+    def exitNullability(self, ctx:SqlParser.NullabilityContext):
+        pass
+
+
     # Enter a parse tree produced by SqlParser#dataType.
     def enterDataType(self, ctx:SqlParser.DataTypeContext):
         pass
 
     # Exit a parse tree produced by SqlParser#dataType.
     def exitDataType(self, ctx:SqlParser.DataTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#typeParams.
+    def enterTypeParams(self, ctx:SqlParser.TypeParamsContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#typeParams.
+    def exitTypeParams(self, ctx:SqlParser.TypeParamsContext):
         pass
 
 
@@ -347,6 +437,69 @@ class SqlParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SqlParser#closeCursor.
     def exitCloseCursor(self, ctx:SqlParser.CloseCursorContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#blockStatement.
+    def enterBlockStatement(self, ctx:SqlParser.BlockStatementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#blockStatement.
+    def exitBlockStatement(self, ctx:SqlParser.BlockStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#blockContent.
+    def enterBlockContent(self, ctx:SqlParser.BlockContentContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#blockContent.
+    def exitBlockContent(self, ctx:SqlParser.BlockContentContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#execStatement.
+    def enterExecStatement(self, ctx:SqlParser.ExecStatementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#execStatement.
+    def exitExecStatement(self, ctx:SqlParser.ExecStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#tryCatchStatement.
+    def enterTryCatchStatement(self, ctx:SqlParser.TryCatchStatementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#tryCatchStatement.
+    def exitTryCatchStatement(self, ctx:SqlParser.TryCatchStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#ifStatement.
+    def enterIfStatement(self, ctx:SqlParser.IfStatementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#ifStatement.
+    def exitIfStatement(self, ctx:SqlParser.IfStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#declareStatement.
+    def enterDeclareStatement(self, ctx:SqlParser.DeclareStatementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#declareStatement.
+    def exitDeclareStatement(self, ctx:SqlParser.DeclareStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#setStatement.
+    def enterSetStatement(self, ctx:SqlParser.SetStatementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#setStatement.
+    def exitSetStatement(self, ctx:SqlParser.SetStatementContext):
         pass
 
 

@@ -189,7 +189,12 @@ WRITETEXT : 'WRITETEXT';
 EXECUTE : 'EXECUTE';
 PRIMARY : 'PRIMARY';
 INT : 'INTEGER';
-
+NVARCHAR : 'NVARCHAR';
+VARCHAR  : 'VARCHAR';
+MAX : 'MAX';
+TRY : 'TRY';
+CATCH : 'CATCH';
+EXISTS : 'EXISTS';
 
 INT_LITERAL    : DIGIT+;
 FLOAT_LITERAL  : DIGIT+ '.' DIGIT+;
@@ -201,7 +206,7 @@ FALSE_LITERAL : 'FALSE';
 
 
 STRING_LITERAL
-    : '\''
+    : 'N'? '\''
       ( ~['\\]| '\\' .| '\'\''| '\\' [ \t]* '\r'? '\n' [ \t]*)*'\''
       {
           import re
@@ -229,6 +234,7 @@ PLUS : '+';
 MINUS: '-';
 STAR : '*';
 SLASH:'/';
+PLUS_EQ : '+=';
 
 COMMA: ',';
 DOT  : '.';
@@ -239,10 +245,10 @@ ZPAREN: ']';
 SEMI: ';';
 
 
-LINE_COMMENT : '--' ~[\r\n]*;
+LINE_COMMENT : '--' ~[\r\n]* -> skip;
 
 COMMENT
-    : '/*' (COMMENT | .)*? '*/';
+    : '/*' (COMMENT | .)*? '*/' -> skip;
 
 
 WS : [ \t\r\n]+ -> skip;

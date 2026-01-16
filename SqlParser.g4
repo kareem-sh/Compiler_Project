@@ -19,6 +19,10 @@ sqlStatement
           dmlStatement
         | ddlStatement
         | cursorStatement
+        | ifStatement
+        | blockStatement
+        | execStatement 
+        | tryCatchStatement
       ) SEMI?
     ;
 
@@ -47,6 +51,7 @@ dmlStatement
     | insertStatement
     | updateStatement
     | deleteStatement
+    | setStatement
     ;
 
 /*
@@ -71,6 +76,9 @@ selectList
 
 selectElement
     : columnName
+    | literal
+    | functionCall
+    | USER_VAR (EQ | PLUS_EQ) expression
     ;
 
 tableSource
@@ -78,7 +86,7 @@ tableSource
     ;
 
 tableName
-    : IDENTIFIER
+    : (BRACKET_IDENTIFIER | IDENTIFIER) (DOT (BRACKET_IDENTIFIER | IDENTIFIER))*
     ;
 
 /*
@@ -101,6 +109,7 @@ joinType
 
 columnName
     : IDENTIFIER
+    | BRACKET_IDENTIFIER
     ;
 
 /*
@@ -152,6 +161,11 @@ searchCondition
 
 predicate
     : expression comparisonOperator expression
+    | expression IN LPAREN expression (COMMA expression)* RPAREN
+    | expression IS NULL
+    | expression IS NOT NULL
+    | EXISTS LPAREN selectStatement RPAREN
+    | NOT EXISTS LPAREN selectStatement RPAREN  
     ;
 
 comparisonOperator
@@ -170,8 +184,46 @@ comparisonOperator
 */
 
 expression
+    : assignmentExpression
+    ;
+
+assignmentExpression
+    : USER_VAR (EQ | PLUS_EQ) additiveExpression  
+    | additiveExpression
+    ;
+
+additiveExpression
+    : additiveExpression PLUS multiplicativeExpression
+    | additiveExpression MINUS multiplicativeExpression
+    | multiplicativeExpression
+    ;
+
+multiplicativeExpression
+    : multiplicativeExpression STAR unaryExpression
+    | multiplicativeExpression SLASH unaryExpression
+    | unaryExpression
+    ;
+
+unaryExpression
+    : PLUS unaryExpression
+    | MINUS unaryExpression
+    | primaryExpression
+    ;
+
+primaryExpression
     : columnName
     | literal
+    | USER_VAR
+    | functionCall
+    | LPAREN expression RPAREN
+    ;
+
+caseExpression
+    : CASE whenClause+ (ELSE expression)? END
+    ;
+
+whenClause
+    : WHEN searchCondition THEN expression
     ;
 
 literal
@@ -183,6 +235,10 @@ literal
     | NULL
     ;
 
+functionCall
+    : IDENTIFIER LPAREN (expression (COMMA expression)*)? RPAREN
+    | BRACKET_IDENTIFIER LPAREN (expression (COMMA expression)*)? RPAREN
+    ;
 /*
 =====================================================
   INSERT
@@ -209,7 +265,7 @@ updateStatement
     ;
 
 assignment
-    : columnName EQ expression
+    : columnName (EQ | PLUS_EQ) expression
     ;
 
 /*
@@ -232,6 +288,7 @@ ddlStatement
     : createTableStatement
     | dropTableStatement
     | alterTableStatement
+    | declareStatement
     ;
 
 /*
@@ -246,12 +303,26 @@ createTableStatement
     ;
 
 columnDefinition
-    : columnName dataType
+    : columnName dataType nullability?
+    ;
+
+
+nullability
+    : NULL
+    | NOT NULL
     ;
 
 dataType
-    : INT
-    | IDENTIFIER
+    :( INT
+    | NVARCHAR LPAREN (MAX | INT_LITERAL) RPAREN
+    | VARCHAR LPAREN (MAX | INT_LITERAL) RPAREN
+    | BRACKET_IDENTIFIER 
+    | IDENTIFIER) typeParams?
+    ;
+
+
+typeParams
+    : LPAREN (MAX | INT_LITERAL) RPAREN
     ;
 
 /*
@@ -307,3 +378,60 @@ fetchCursor
 closeCursor
     : CLOSE IDENTIFIER
     ;
+
+/*
+=====================================================
+  Block STATEMENT
+=====================================================
+*/
+
+blockStatement
+    : BEGIN blockContent* END
+    ;
+
+blockContent
+    : sqlStatement
+    | tryCatchStatement 
+    ;
+
+/*
+=====================================================
+  Exeception STATEMENT
+=====================================================
+*/
+
+execStatement
+    // : (EXEC | EXECUTE) (tableName | STRING_LITERAL) (expression (COMMA expression)*)?
+    : (EXEC | EXECUTE) expression (COMMA expression)*
+    ;
+
+tryCatchStatement
+    : BEGIN TRY blockContent* END TRY
+      BEGIN CATCH blockContent* END CATCH
+    ;
+
+/*
+=====================================================
+  IF STATEMENT
+=====================================================
+*/
+
+    ifStatement
+    : IF searchCondition sqlStatement (ELSE sqlStatement)?
+    ;
+
+/*
+=====================================================
+  Declare STATEMENT
+=====================================================
+*/
+
+declareStatement
+    : DECLARE USER_VAR dataType (EQ expression)? (COMMA USER_VAR dataType (EQ expression)?)*
+    ;
+
+setStatement
+    : SET USER_VAR (EQ | PLUS_EQ) expression (COMMA USER_VAR (EQ | PLUS_EQ) expression)* SEMI?
+    ;
+
+    
