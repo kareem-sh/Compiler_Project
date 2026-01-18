@@ -187,6 +187,36 @@ public interface SqlParserListener extends ParseTreeListener {
 	 */
 	void exitSearchCondition(SqlParser.SearchConditionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SqlParser#orExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterOrExpression(SqlParser.OrExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SqlParser#orExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitOrExpression(SqlParser.OrExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SqlParser#andExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAndExpression(SqlParser.AndExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SqlParser#andExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAndExpression(SqlParser.AndExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SqlParser#notExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterNotExpression(SqlParser.NotExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SqlParser#notExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitNotExpression(SqlParser.NotExpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SqlParser#predicate}.
 	 * @param ctx the parse tree
 	 */
@@ -377,15 +407,15 @@ public interface SqlParserListener extends ParseTreeListener {
 	 */
 	void exitColumnDefinition(SqlParser.ColumnDefinitionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SqlParser#nullability}.
+	 * Enter a parse tree produced by {@link SqlParser#columnOptions}.
 	 * @param ctx the parse tree
 	 */
-	void enterNullability(SqlParser.NullabilityContext ctx);
+	void enterColumnOptions(SqlParser.ColumnOptionsContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SqlParser#nullability}.
+	 * Exit a parse tree produced by {@link SqlParser#columnOptions}.
 	 * @param ctx the parse tree
 	 */
-	void exitNullability(SqlParser.NullabilityContext ctx);
+	void exitColumnOptions(SqlParser.ColumnOptionsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SqlParser#dataType}.
 	 * @param ctx the parse tree
@@ -556,4 +586,34 @@ public interface SqlParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSetStatement(SqlParser.SetStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SqlParser#havingClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterHavingClause(SqlParser.HavingClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SqlParser#havingClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitHavingClause(SqlParser.HavingClauseContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SqlParser#useDatabaseStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterUseDatabaseStatement(SqlParser.UseDatabaseStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SqlParser#useDatabaseStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitUseDatabaseStatement(SqlParser.UseDatabaseStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SqlParser#truncateTableStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterTruncateTableStatement(SqlParser.TruncateTableStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SqlParser#truncateTableStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitTruncateTableStatement(SqlParser.TruncateTableStatementContext ctx);
 }

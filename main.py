@@ -2,7 +2,25 @@ from antlr4 import *
 from SqlLexer import SqlLexer
 from SqlParser import SqlParser
 from antlr4.tree.Trees import Trees
+from antlr4.tree.Tree import TerminalNodeImpl
 
+def print_tree(node, parser, indent=""):
+    
+
+    if isinstance(node, TerminalNodeImpl):
+        # Leaf token
+        text = node.getText()
+        if text.strip():  # skip empty whitespace tokens
+            print(f"{indent}|-- {text}")
+        return
+
+    # Non-terminal node
+    rule_name = parser.ruleNames[node.getRuleIndex()] if hasattr(node, "getRuleIndex") else str(node)
+    print(f"{indent}{rule_name}")
+
+    # Recurse for children
+    for child in node.getChildren():
+        print_tree(child, parser, indent + "    ")
 
 def parse_sql(code: str):
     print("========== SQL INPUT ==========")
@@ -33,6 +51,7 @@ def parse_sql(code: str):
 
     print("========== PARSE TREE ==========")
     print(Trees.toStringTree(tree, None, parser))
+    # print_tree(tree , parser)
     print("================================\n")
 
 
@@ -57,4 +76,4 @@ SELECT * FROM t ORDER BY id DESC;
 # parse_sql(sql1)
 
 # Or from file
-parse_file("testing.sql")
+parse_file("train.sql")

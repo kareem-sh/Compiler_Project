@@ -170,6 +170,33 @@ class SqlParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SqlParser#orExpression.
+    def enterOrExpression(self, ctx:SqlParser.OrExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#orExpression.
+    def exitOrExpression(self, ctx:SqlParser.OrExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#andExpression.
+    def enterAndExpression(self, ctx:SqlParser.AndExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#andExpression.
+    def exitAndExpression(self, ctx:SqlParser.AndExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#notExpression.
+    def enterNotExpression(self, ctx:SqlParser.NotExpressionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#notExpression.
+    def exitNotExpression(self, ctx:SqlParser.NotExpressionContext):
+        pass
+
+
     # Enter a parse tree produced by SqlParser#predicate.
     def enterPredicate(self, ctx:SqlParser.PredicateContext):
         pass
@@ -500,6 +527,33 @@ class SqlParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SqlParser#setStatement.
     def exitSetStatement(self, ctx:SqlParser.SetStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#havingClause.
+    def enterHavingClause(self, ctx:SqlParser.HavingClauseContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#havingClause.
+    def exitHavingClause(self, ctx:SqlParser.HavingClauseContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#useDatabaseStatement.
+    def enterUseDatabaseStatement(self, ctx:SqlParser.UseDatabaseStatementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#useDatabaseStatement.
+    def exitUseDatabaseStatement(self, ctx:SqlParser.UseDatabaseStatementContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#truncateTableStatement.
+    def enterTruncateTableStatement(self, ctx:SqlParser.TruncateTableStatementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#truncateTableStatement.
+    def exitTruncateTableStatement(self, ctx:SqlParser.TruncateTableStatementContext):
         pass
 
 

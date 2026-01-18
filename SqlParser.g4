@@ -62,10 +62,11 @@ dmlStatement
 
 selectStatement
     : SELECT selectList
-      FROM tableSource
+      (FROM tableSource)?
       joinClause*
       whereClause?
       groupByClause?
+      havingClause?
       orderByClause?
     ;
 
@@ -75,14 +76,11 @@ selectList
     ;
 
 selectElement
-    : columnName
-    | literal
-    | functionCall
-    | USER_VAR (EQ | PLUS_EQ) expression
+    : expression (AS? (IDENTIFIER | STRING_LITERAL))?
     ;
 
 tableSource
-    : tableName
+    : tableName (AS? IDENTIFIER)?
     ;
 
 tableName
@@ -100,16 +98,16 @@ joinClause
     ;
 
 joinType
-    : INNER
-    | LEFT
-    | RIGHT
-    | FULL
+    : INNER OUTER?
+    | LEFT OUTER?
+    | RIGHT OUTER?
+    | FULL OUTER?
     | /* empty = default INNER */
     ;
 
 columnName
-    : IDENTIFIER
-    | BRACKET_IDENTIFIER
+    : (BRACKET_IDENTIFIER | IDENTIFIER)
+      (DOT (BRACKET_IDENTIFIER | IDENTIFIER))*
     ;
 
 /*
@@ -153,19 +151,33 @@ orderElement
 */
 
 searchCondition
-    : searchCondition AND searchCondition
-    | searchCondition OR searchCondition
-    | LPAREN searchCondition RPAREN
+    : orExpression
+    ;
+
+orExpression
+    : orExpression OR andExpression
+    | andExpression
+    ;
+
+andExpression
+    : andExpression AND notExpression
+    | notExpression
+    ;
+
+notExpression
+    : NOT notExpression
     | predicate
     ;
 
 predicate
-    : expression comparisonOperator expression
-    | expression IN LPAREN expression (COMMA expression)* RPAREN
-    | expression IS NULL
-    | expression IS NOT NULL
+    : LPAREN searchCondition RPAREN 
+    | expression comparisonOperator expression
+    | expression NOT? IN LPAREN (expression (COMMA expression)* | selectStatement) RPAREN
+    | expression IS NOT? NULL
     | EXISTS LPAREN selectStatement RPAREN
     | NOT EXISTS LPAREN selectStatement RPAREN  
+    | expression NOT? BETWEEN expression AND expression
+    | | expression NOT? LIKE expression
     ;
 
 comparisonOperator
@@ -211,11 +223,12 @@ unaryExpression
     ;
 
 primaryExpression
-    : columnName
+    : LPAREN selectStatement RPAREN  
+    | LPAREN expression RPAREN      
+    | functionCall
+    | columnName
     | literal
     | USER_VAR
-    | functionCall
-    | LPAREN expression RPAREN
     ;
 
 caseExpression
@@ -236,8 +249,8 @@ literal
     ;
 
 functionCall
-    : IDENTIFIER LPAREN (expression (COMMA expression)*)? RPAREN
-    | BRACKET_IDENTIFIER LPAREN (expression (COMMA expression)*)? RPAREN
+    : (IDENTIFIER | BRACKET_IDENTIFIER | MAX | AVG | COUNT | SUM | MIN) 
+      LPAREN (expression (COMMA expression)*)? RPAREN
     ;
 /*
 =====================================================
@@ -249,7 +262,7 @@ insertStatement
     : INSERT INTO tableName
       LPAREN columnName (COMMA columnName)* RPAREN
       VALUES
-      LPAREN literal (COMMA literal)* RPAREN
+        (LPAREN literal (COMMA literal)* RPAREN) (COMMA LPAREN literal (COMMA literal)* RPAREN)*
     ;
 
 /*
@@ -289,6 +302,8 @@ ddlStatement
     | dropTableStatement
     | alterTableStatement
     | declareStatement
+    | useDatabaseStatement
+    | truncateTableStatement
     ;
 
 /*
@@ -303,12 +318,14 @@ createTableStatement
     ;
 
 columnDefinition
-    : columnName dataType nullability?
+    : columnName dataType columnOptions*
     ;
 
 
-nullability
-    : NULL
+columnOptions
+    : IDENTITY
+    | PRIMARY KEY
+    | NULL
     | NOT NULL
     ;
 
@@ -401,8 +418,10 @@ blockContent
 */
 
 execStatement
-    // : (EXEC | EXECUTE) (tableName | STRING_LITERAL) (expression (COMMA expression)*)?
-    : (EXEC | EXECUTE) expression (COMMA expression)*
+    : (EXEC | EXECUTE)
+      (IDENTIFIER | BRACKET_IDENTIFIER)
+      (expression (COMMA expression)*)?
+      SEMI?
     ;
 
 tryCatchStatement
@@ -430,8 +449,36 @@ declareStatement
     : DECLARE USER_VAR dataType (EQ expression)? (COMMA USER_VAR dataType (EQ expression)?)*
     ;
 
+/*
+=====================================================
+  Set STATEMENT
+=====================================================
+*/
+
 setStatement
     : SET USER_VAR (EQ | PLUS_EQ) expression (COMMA USER_VAR (EQ | PLUS_EQ) expression)* SEMI?
     ;
 
-    
+havingClause
+    : HAVING searchCondition
+    ;
+
+/*
+=====================================================
+  UseDatabase STATEMENT
+=====================================================
+*/
+
+useDatabaseStatement
+    : USE IDENTIFIER
+    ;
+
+/*
+=====================================================
+  TruncateTable STATEMENT
+=====================================================
+*/
+
+truncateTableStatement
+    : TRUNCATE TABLE tableName SEMI?
+    ;
