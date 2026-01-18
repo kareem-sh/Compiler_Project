@@ -14,12 +14,7 @@ def parse_sql(code: str):
 
     # 2) Lexer
     lexer = SqlLexer(input_stream)
-
-    # 3) Token stream
-    token_stream = CommonTokenStream(lexer)
-    token_stream.fill()
-
-    print("========== TOKENS ==========")
+    
     for token in token_stream.tokens:
         if token.type != Token.EOF:
             print(f"{lexer.symbolicNames[token.type]:<20} -> {token.text}")
@@ -54,7 +49,7 @@ SELECT * FROM t ORDER BY id DESC;
 """
 
 # Parse directly
-parse_sql(sql1)
+# parse_sql(sql1)
 
 # Or from file
-# parse_file("testing.sql")
+parse_file("testing.sql")
