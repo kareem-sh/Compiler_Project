@@ -65,23 +65,27 @@ python -m venv antrl4-env
 2. Activate the environment:
 
 Windows (PowerShell):
+
 ```bash
 .\antrl4-env\Scripts\activate
 ```
 
 Linux / Mac:
+
 ```bash
 source antrl4-env/bin/activate
 ```
 
 3. Install the ANTLR4 runtime for Python:
+
 ```bash
-   pip install antlr4-python3-runtime
+pip install antlr4-python3-runtime
 ```
 
 4. Verify installation:
+
 ```bash
-   python -c "from antlr4 import \*; print('ANTLR4 runtime works!')"
+python -c "from antlr4 import \*; print('ANTLR4 runtime works!')"
 ```
 
 Java Setup:
@@ -93,19 +97,24 @@ Java Setup:
 # Python
 
 Generate Python lexer and parser from grammar files:
+
 ```bash
-    antlr4 -Dlanguage=Python3 SqlLexer.g4 SqlParser.g4
+antlr4 -Dlanguage=Python3 SqlLexer.g4 SqlParser.g4
 ```
+
 This creates SqlLexer.py, SqlParser.py, and other helper files.
 
 # Java
 
 Generate Java lexer and parser:
+
 ```bash
-    java -jar antlr-4.13.2-complete.jar SqlLexer.g4 SqlParser.g4
+java -jar antlr-4.13.2-complete.jar SqlLexer.g4 SqlParser.g4
 ```
+
 This creates SqlLexer.java, SqlParser.java, and other helper files.
 Compile generated files:
+
 ```bash
 javac \*.java
 ```
@@ -115,9 +124,11 @@ javac \*.java
 # Python
 
 Run your main.py script with your virtual environment activated:
+
 ```bash
-    python main.py
+python main.py
 ```
+
 The script reads train.sql (or any SQL file)
 
 Prints all tokens
@@ -127,14 +138,17 @@ Prints parse tree (formatted tree is optional)
 # Java
 
 1. Compile the main parser class (if you have Main.java):
+
 ```bash
-   javac -cp .;antlr-4.13.2-complete.jar Main.java
+javac -cp .;antlr-4.13.2-complete.jar Main.java
 ```
 
 2. Run it:
+
 ```bash
-   java -cp .;antlr-4.13.2-complete.jar Main
+java -cp .;antlr-4.13.2-complete.jar Main
 ```
+
 Make sure your generated .class files are in the same folder.
 
 ### Semantic Phase
@@ -142,13 +156,9 @@ Make sure your generated .class files are in the same folder.
 The semantic phase is where you analyze the parse tree for correctness, types, or additional rules.
 For example:
 
-# Python:
+- Python: traverse the parse tree with visitor/listener patterns from ANTLR and implement semantic checks.
 
-    traverse the parse tree with visitor/listener patterns from ANTLR and implement semantic checks.
-
-# Java:
-
-    use ParseTreeWalker and custom listeners to perform semantic validations.
+- Java: use ParseTreeWalker and custom listeners to perform semantic validations.
 
 Example in Python:
 
