@@ -14,7 +14,7 @@ def parse_sql(code: str):
 
     # 2) Lexer
     lexer = SqlLexer(input_stream)
-    
+
     for token in token_stream.tokens:
         if token.type != Token.EOF:
             print(f"{lexer.symbolicNames[token.type]:<20} -> {token.text}")
