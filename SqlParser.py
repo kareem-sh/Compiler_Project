@@ -428,7 +428,7 @@ class SqlParser ( Parser ):
     RULE_ddlStatement = 37
     RULE_createTableStatement = 38
     RULE_columnDefinition = 39
-    RULE_nullability = 40
+    RULE_columnOptions = 40
     RULE_dataType = 41
     RULE_typeParams = 42
     RULE_dropTableStatement = 43
@@ -460,7 +460,7 @@ class SqlParser ( Parser ):
                    "unaryExpression", "primaryExpression", "caseExpression", 
                    "whenClause", "literal", "functionCall", "insertStatement", 
                    "updateStatement", "assignment", "deleteStatement", "ddlStatement", 
-                   "createTableStatement", "columnDefinition", "nullability", 
+                   "createTableStatement", "columnDefinition", "columnOptions", 
                    "dataType", "typeParams", "dropTableStatement", "alterTableStatement", 
                    "alterAction", "cursorStatement", "declareCursor", "openCursor", 
                    "fetchCursor", "closeCursor", "blockStatement", "blockContent", 
@@ -3992,11 +3992,11 @@ class SqlParser ( Parser ):
             return self.getTypedRuleContext(SqlParser.DataTypeContext,0)
 
 
-        def nullability(self, i:int=None):
+        def columnOptions(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(SqlParser.NullabilityContext)
+                return self.getTypedRuleContexts(SqlParser.ColumnOptionsContext)
             else:
-                return self.getTypedRuleContext(SqlParser.NullabilityContext,i)
+                return self.getTypedRuleContext(SqlParser.ColumnOptionsContext,i)
 
 
         def getRuleIndex(self):
@@ -4029,7 +4029,7 @@ class SqlParser ( Parser ):
             _la = self._input.LA(1)
             while _la==51 or ((((_la - 117)) & ~0x3f) == 0 and ((1 << (_la - 117)) & -9223372036854775799) != 0):
                 self.state = 559
-                self.nullability()
+                self.columnOptions()
                 self.state = 564
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
@@ -4043,7 +4043,7 @@ class SqlParser ( Parser ):
         return localctx
 
 
-    class NullabilityContext(ParserRuleContext):
+    class ColumnOptionsContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -4066,23 +4066,23 @@ class SqlParser ( Parser ):
             return self.getToken(SqlParser.NOT, 0)
 
         def getRuleIndex(self):
-            return SqlParser.RULE_nullability
+            return SqlParser.RULE_columnOptions
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterNullability" ):
-                listener.enterNullability(self)
+            if hasattr( listener, "enterColumnOptions" ):
+                listener.enterColumnOptions(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitNullability" ):
-                listener.exitNullability(self)
+            if hasattr( listener, "exitColumnOptions" ):
+                listener.exitColumnOptions(self)
 
 
 
 
-    def nullability(self):
+    def columnOptions(self):
 
-        localctx = SqlParser.NullabilityContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 80, self.RULE_nullability)
+        localctx = SqlParser.ColumnOptionsContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 80, self.RULE_columnOptions)
         try:
             self.state = 571
             self._errHandler.sync(self)

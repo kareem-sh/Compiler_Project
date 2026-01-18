@@ -368,12 +368,12 @@ class SqlParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SqlParser#nullability.
-    def enterNullability(self, ctx:SqlParser.NullabilityContext):
+    # Enter a parse tree produced by SqlParser#columnOptions.
+    def enterColumnOptions(self, ctx:SqlParser.ColumnOptionsContext):
         pass
 
-    # Exit a parse tree produced by SqlParser#nullability.
-    def exitNullability(self, ctx:SqlParser.NullabilityContext):
+    # Exit a parse tree produced by SqlParser#columnOptions.
+    def exitColumnOptions(self, ctx:SqlParser.ColumnOptionsContext):
         pass
 
 
