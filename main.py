@@ -54,7 +54,7 @@ SELECT * FROM t ORDER BY id DESC;
 """
 
 # Parse directly
-# parse_sql(sql1)
+parse_sql(sql1)
 
 # Or from file
-parse_file("testing.sql")
+# parse_file("testing.sql")
