@@ -305,6 +305,24 @@ class SqlParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SqlParser#functionName.
+    def enterFunctionName(self, ctx:SqlParser.FunctionNameContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#functionName.
+    def exitFunctionName(self, ctx:SqlParser.FunctionNameContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#keyword.
+    def enterKeyword(self, ctx:SqlParser.KeywordContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#keyword.
+    def exitKeyword(self, ctx:SqlParser.KeywordContext):
+        pass
+
+
     # Enter a parse tree produced by SqlParser#insertStatement.
     def enterInsertStatement(self, ctx:SqlParser.InsertStatementContext):
         pass
@@ -365,6 +383,78 @@ class SqlParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by SqlParser#columnDefinition.
     def exitColumnDefinition(self, ctx:SqlParser.ColumnDefinitionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#tableConstraint.
+    def enterTableConstraint(self, ctx:SqlParser.TableConstraintContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#tableConstraint.
+    def exitTableConstraint(self, ctx:SqlParser.TableConstraintContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#tableElement.
+    def enterTableElement(self, ctx:SqlParser.TableElementContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#tableElement.
+    def exitTableElement(self, ctx:SqlParser.TableElementContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#constraintDefinition.
+    def enterConstraintDefinition(self, ctx:SqlParser.ConstraintDefinitionContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#constraintDefinition.
+    def exitConstraintDefinition(self, ctx:SqlParser.ConstraintDefinitionContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#primaryKeyConstraint.
+    def enterPrimaryKeyConstraint(self, ctx:SqlParser.PrimaryKeyConstraintContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#primaryKeyConstraint.
+    def exitPrimaryKeyConstraint(self, ctx:SqlParser.PrimaryKeyConstraintContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#uniqueConstraint.
+    def enterUniqueConstraint(self, ctx:SqlParser.UniqueConstraintContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#uniqueConstraint.
+    def exitUniqueConstraint(self, ctx:SqlParser.UniqueConstraintContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#clustered.
+    def enterClustered(self, ctx:SqlParser.ClusteredContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#clustered.
+    def exitClustered(self, ctx:SqlParser.ClusteredContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#foreignKeyConstraint.
+    def enterForeignKeyConstraint(self, ctx:SqlParser.ForeignKeyConstraintContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#foreignKeyConstraint.
+    def exitForeignKeyConstraint(self, ctx:SqlParser.ForeignKeyConstraintContext):
+        pass
+
+
+    # Enter a parse tree produced by SqlParser#checkConstraint.
+    def enterCheckConstraint(self, ctx:SqlParser.CheckConstraintContext):
+        pass
+
+    # Exit a parse tree produced by SqlParser#checkConstraint.
+    def exitCheckConstraint(self, ctx:SqlParser.CheckConstraintContext):
         pass
 
 

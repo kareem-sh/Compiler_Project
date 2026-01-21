@@ -177,7 +177,7 @@ predicate
     | EXISTS LPAREN selectStatement RPAREN
     | NOT EXISTS LPAREN selectStatement RPAREN  
     | expression NOT? BETWEEN expression AND expression
-    | | expression NOT? LIKE expression
+    | expression NOT? LIKE expression
     ;
 
 comparisonOperator
@@ -224,7 +224,8 @@ unaryExpression
 
 primaryExpression
     : LPAREN selectStatement RPAREN  
-    | LPAREN expression RPAREN      
+    | LPAREN expression RPAREN
+    | caseExpression      
     | functionCall
     | columnName
     | literal
@@ -249,8 +250,26 @@ literal
     ;
 
 functionCall
-    : (IDENTIFIER | BRACKET_IDENTIFIER | MAX | AVG | COUNT | SUM | MIN) 
-      LPAREN (expression (COMMA expression)*)? RPAREN
+    : functionName LPAREN (expression (COMMA expression)*)? RPAREN
+    ;
+
+functionName
+    : IDENTIFIER
+    | BRACKET_IDENTIFIER
+    | keyword
+    ;
+
+keyword
+    : MAX
+    | MIN
+    | AVG
+    | SUM
+    | COUNT
+    // | OBJECT_ID
+    // | QUOTENAME
+    // | ERROR_MESSAGE
+    // | ERROR_SEVERITY
+    // | ERROR_STATE
     ;
 /*
 =====================================================
@@ -260,9 +279,12 @@ functionCall
 
 insertStatement
     : INSERT INTO tableName
-      LPAREN columnName (COMMA columnName)* RPAREN
-      VALUES
-        (LPAREN literal (COMMA literal)* RPAREN) (COMMA LPAREN literal (COMMA literal)* RPAREN)*
+      (LPAREN columnName (COMMA columnName)* RPAREN)?
+      (
+          VALUES (LPAREN expression (COMMA expression)* RPAREN)
+                (COMMA LPAREN expression (COMMA expression)* RPAREN)*
+        | selectStatement
+      )
     ;
 
 /*
@@ -274,6 +296,7 @@ insertStatement
 updateStatement
     : UPDATE tableName
       SET assignment (COMMA assignment)*
+      (FROM tableSource)?
       whereClause?
     ;
 
@@ -314,19 +337,56 @@ ddlStatement
 
 createTableStatement
     : CREATE TABLE tableName
-      LPAREN columnDefinition (COMMA columnDefinition)* RPAREN
+      LPAREN tableElement (COMMA tableElement)* RPAREN
     ;
 
 columnDefinition
     : columnName dataType columnOptions*
     ;
 
+tableConstraint
+    : CONSTRAINT IDENTIFIER constraintDefinition
+    ;
+
+tableElement
+    : columnDefinition
+    | tableConstraint
+    ;
+
+constraintDefinition
+    : primaryKeyConstraint
+    | uniqueConstraint
+    | foreignKeyConstraint
+    | checkConstraint
+    ;
+
+primaryKeyConstraint
+    : PRIMARY KEY clustered? LPAREN columnName (COMMA columnName)* RPAREN
+    ;
+
+uniqueConstraint
+    : UNIQUE clustered? LPAREN columnName (COMMA columnName)* RPAREN
+    ;
+
+clustered
+    : CLUSTERED
+    | NONCLUSTERED
+    ;
+
+foreignKeyConstraint
+    : FOREIGN KEY LPAREN columnName (COMMA columnName)* RPAREN
+      REFERENCES tableName LPAREN columnName (COMMA columnName)* RPAREN
+    ;
+
+checkConstraint
+    : CHECK LPAREN searchCondition RPAREN
+    ;
 
 columnOptions
     : IDENTITY
-    | PRIMARY KEY
     | NULL
     | NOT NULL
+    | PRIMARY KEY
     ;
 
 dataType
