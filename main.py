@@ -272,5 +272,5 @@ def parse_file(path: str):
 # ===========================
 if __name__ == "__main__":
     sql1 = "SELECT name, age FROM users WHERE age > 10;"
-    parse_file("train.sql")
+    parse_file("test.sql")
     # parse_sql(sql1)
