@@ -4,9 +4,6 @@ from ast_nodes import *
 
 class ASTBuilder(SqlParserVisitor):
 
-    # =========================
-    # ENTRY
-    # =========================
     def visitSqlFile(self, ctx):
         stmts = []
         for stmt in ctx.sqlStatement():
@@ -32,26 +29,12 @@ class ASTBuilder(SqlParserVisitor):
             return self.visit(ctx.cursorStatement())
         return None
 
-    # =========================
     # CONTROL FLOW
-    # =========================
     def visitTryCatchStatement(self, ctx):
         try_block = []
         catch_block = []
-
-        # Get all blockContent
         contents = ctx.blockContent()
-
-        # Find the END TRY marker to separate try and catch blocks
-        # Look for the structure: END TRY BEGIN CATCH
-        # In your grammar, the try block ends with END TRY
-        # and catch block starts with BEGIN CATCH
-
-        # Simple approach: First half is try, second half is catch
-        # But better: Look for the actual structure
         children = list(ctx.children)
-
-        # Find indices of END TRY and BEGIN CATCH
         end_try_index = -1
         begin_catch_index = -1
 
@@ -66,13 +49,9 @@ class ASTBuilder(SqlParserVisitor):
                 if next_text.upper() == 'CATCH':
                     begin_catch_index = i
 
-        # If we found the markers, split based on them
         if end_try_index != -1 and begin_catch_index != -1:
-            # Everything between BEGIN TRY and END TRY is try block
-            # Everything between BEGIN CATCH and END CATCH is catch block
             for i, content in enumerate(contents):
-                # This is a simplified approach - you need to check your grammar structure
-                if i < len(contents) // 2:  # Temporary fix
+                if i < len(contents) // 2:
                     result = self.visit(content)
                     if result:
                         try_block.append(result)
@@ -81,7 +60,6 @@ class ASTBuilder(SqlParserVisitor):
                     if result:
                         catch_block.append(result)
         else:
-            # Fallback: split in half
             mid = len(contents) // 2
             for i in range(mid):
                 result = self.visit(contents[i])
@@ -115,9 +93,7 @@ class ASTBuilder(SqlParserVisitor):
             return self.visit(ctx.sqlStatement())
         return None
 
-    # =========================
     # DML STATEMENTS
-    # =========================
     def visitDmlStatement(self, ctx):
         if ctx.selectStatement():
             return self.visit(ctx.selectStatement())
@@ -146,9 +122,8 @@ class ASTBuilder(SqlParserVisitor):
             return self.visit(ctx.truncateTableStatement())
         return None
 
-    # =========================
+
     # SELECT STATEMENT
-    # =========================
     def visitSelectStatement(self, ctx):
         columns = self.visit(ctx.selectList())
 
@@ -180,7 +155,6 @@ class ASTBuilder(SqlParserVisitor):
         if ctx.orderByClause():
             order_by = self.visit(ctx.orderByClause())
 
-        # Pass all parameters in correct order
         return SelectStatement(
             columns=columns,
             from_clause=from_clause,
@@ -203,20 +177,16 @@ class ASTBuilder(SqlParserVisitor):
         expression = self.visit(ctx.expression())
         alias = None
 
-        # Check for alias (IDENTIFIER or STRING_LITERAL)
         if ctx.IDENTIFIER():
             alias = ctx.IDENTIFIER().getText()
         elif ctx.STRING_LITERAL():
             alias_text = ctx.STRING_LITERAL().getText()
-            # Remove quotes from string literal alias
             if alias_text.startswith("'") and alias_text.endswith("'"):
                 alias = alias_text[1:-1]
 
         return SelectColumn(expression, alias)
 
-    # =========================
     # FROM CLAUSE & JOINS
-    # =========================
     def visitTableSource(self, ctx):
         table_name = ctx.tableName().getText()
         alias = None
@@ -239,9 +209,7 @@ class ASTBuilder(SqlParserVisitor):
 
         return Join(join_type, table_source, condition)
 
-    # =========================
     # WHERE, GROUP BY, HAVING, ORDER BY
-    # =========================
     def visitWhereClause(self, ctx):
         condition = self.visit(ctx.searchCondition())
         return WhereClause(condition)
@@ -267,9 +235,7 @@ class ASTBuilder(SqlParserVisitor):
             order = "ASC"
         return OrderByElement(column, order)
 
-    # =========================
     # PREDICATES & EXPRESSIONS
-    # =========================
     def visitPredicate(self, ctx):
         # EXISTS
         if ctx.EXISTS():
@@ -278,7 +244,6 @@ class ASTBuilder(SqlParserVisitor):
                 subquery = self.visit(select_stmt)
                 return ExistsExpression(subquery)
 
-        # IS NULL / IS NOT NULL
         if ctx.IS():
             exprs = ctx.expression()
             if exprs:
@@ -329,7 +294,6 @@ class ASTBuilder(SqlParserVisitor):
         if ctx.LPAREN() and ctx.searchCondition():
             return self.visit(ctx.searchCondition())
 
-        # Fallback
         exprs = ctx.expression()
         if exprs:
             return self.visit(exprs[0])
@@ -359,9 +323,7 @@ class ASTBuilder(SqlParserVisitor):
             return UnaryExpression("NOT", expr)
         return self.visit(ctx.predicate())
 
-    # =========================
     # EXPRESSIONS
-    # =========================
     def visitExpression(self, ctx):
         return self.visit(ctx.getChild(0))
 
@@ -422,11 +384,9 @@ class ASTBuilder(SqlParserVisitor):
         if ctx.ELSE():
             exprs = ctx.expression()
             if exprs:
-                # If exprs is a single ExpressionContext, just visit it
                 if not isinstance(exprs, list):
                     else_expr = self.visit(exprs)
                 else:
-                    # Get the last expression which should be the ELSE expression
                     else_expr = self.visit(exprs[-1])
 
         return CaseExpression(whens, else_expr)
@@ -440,9 +400,8 @@ class ASTBuilder(SqlParserVisitor):
 
         return FunctionCall(name, args)
 
-    # =========================
+
     # INSERT, UPDATE, DELETE
-    # =========================
     def visitInsertStatement(self, ctx):
         table = ctx.tableName().getText()
 
@@ -450,15 +409,10 @@ class ASTBuilder(SqlParserVisitor):
         if ctx.columnName():
             columns = [c.getText() for c in ctx.columnName()]
 
-        # Check if it's INSERT ... VALUES or INSERT ... SELECT
         if ctx.VALUES():
-            # VALUES case - handle multiple rows
             values_list = []
-            # Get all expression lists (each LPAREN expression... RPAREN is a row)
             expr_lists = ctx.expression()
             if expr_lists:
-                # For simplicity, flatten all expressions into one list
-                # In a more complete implementation, you'd group by row
                 values_list = [self.visit(v) for v in expr_lists]
             return InsertStatement(table, columns, values_list, None)
         else:
@@ -476,7 +430,7 @@ class ASTBuilder(SqlParserVisitor):
         if ctx.whereClause():
             where = self.visit(ctx.whereClause())
 
-        return UpdateStatement(table, assignments, None, where)  # Add None for from_clause
+        return UpdateStatement(table, assignments, None, where)
 
     def visitDeleteStatement(self, ctx):
         table = ctx.tableName().getText()
@@ -493,9 +447,6 @@ class ASTBuilder(SqlParserVisitor):
         op = ctx.EQ().getText() if ctx.EQ() else ctx.PLUS_EQ().getText()
         return Assignment(column, value, op)
 
-    # =========================
-    # DDL STATEMENTS
-    # =========================
     def visitCreateTableStatement(self, ctx):
         table = ctx.tableName().getText()
         columns = []
@@ -522,7 +473,6 @@ class ASTBuilder(SqlParserVisitor):
     def visitTableConstraint(self, ctx):
         name = ctx.IDENTIFIER().getText() if ctx.IDENTIFIER() else None
         constraint_def = self.visit(ctx.constraintDefinition())
-        # The Constraint class expects different parameters
         return Constraint(
             name=name,
             constraint_type=constraint_def.constraint_type,
@@ -545,7 +495,6 @@ class ASTBuilder(SqlParserVisitor):
 
     def visitPrimaryKeyConstraint(self, ctx):
         columns = [col.getText() for col in ctx.columnName()]
-        # Return a simple object with the needed attributes
         class TempConstraint:
             def __init__(self):
                 self.constraint_type = "PRIMARY KEY"
@@ -556,7 +505,6 @@ class ASTBuilder(SqlParserVisitor):
         return TempConstraint()
 
     def visitForeignKeyConstraint(self, ctx):
-        # Get column lists - first half are local columns, second half are referenced columns
         all_columns = [col.getText() for col in ctx.columnName()]
         mid = len(all_columns) // 2
         columns = all_columns[:mid]
@@ -612,9 +560,7 @@ class ASTBuilder(SqlParserVisitor):
             return AlterAction("DROP", column=ColumnDefinition(column_name, None))
         return None
 
-    # =========================
     # VARIABLES & SET
-    # =========================
     def visitDeclareStatement(self, ctx):
         user_vars = ctx.USER_VAR()
         data_types = ctx.dataType()
@@ -645,11 +591,10 @@ class ASTBuilder(SqlParserVisitor):
             variable = Variable(variables[0].getText())
             value = self.visit(expressions[0])
 
-            # Fix: Handle EQ() and PLUS_EQ() which might return lists
             eq_tokens = ctx.EQ()
             plus_eq_tokens = ctx.PLUS_EQ()
 
-            op = "="  # default
+            op = "="
             if eq_tokens:
                 if isinstance(eq_tokens, list) and len(eq_tokens) > 0:
                     op = eq_tokens[0].getText()
@@ -670,9 +615,7 @@ class ASTBuilder(SqlParserVisitor):
                 statements.append(SetStatement(variable, value))
             return Block(statements)
 
-    # =========================
     # OTHER STATEMENTS
-    # =========================
     def visitUseDatabaseStatement(self, ctx):
         database_name = ctx.IDENTIFIER().getText()
         return UseDatabaseStatement(database_name)
@@ -688,9 +631,7 @@ class ASTBuilder(SqlParserVisitor):
             args = [self.visit(e) for e in ctx.expression()]
         return ExecStatement(proc_name, args)
 
-    # =========================
     # CURSOR STATEMENTS
-    # =========================
     def visitCursorStatement(self, ctx):
         if ctx.declareCursor():
             return self.visit(ctx.declareCursor())
@@ -719,22 +660,18 @@ class ASTBuilder(SqlParserVisitor):
         cursor_name = ctx.IDENTIFIER().getText()
         return CloseCursor(cursor_name)
 
-    # =========================
+
     # LEAVES
-    # =========================
     def visitColumnName(self, ctx):
         text = ctx.getText()
-        # Handle bracketed identifiers and table prefixes
         text = text.replace('[', '').replace(']', '')
         parts = text.split('.')
 
         if len(parts) == 2:
-            # Has table prefix
             table = parts[0]
             name = parts[1]
             return Column(name, table)
         else:
-            # No table prefix
             return Column(text)
 
     def visitLiteral(self, ctx):

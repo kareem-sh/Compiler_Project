@@ -7,9 +7,7 @@ from ASTBuilderVisitor import ASTBuilder
 from ast_nodes import *
 
 
-# ===========================
 # PARSE TREE PRINTER
-# ===========================
 def print_parse_tree(node, parser, indent=""):
     if isinstance(node, TerminalNodeImpl):
         text = node.getText()
@@ -24,9 +22,8 @@ def print_parse_tree(node, parser, indent=""):
         print_parse_tree(child, parser, indent + "    ")
 
 
-# ===========================
+
 # AST PRINTER
-# ===========================
 def print_ast(node, indent=""):
     """Print the AST in a readable format."""
     if node is None:
@@ -207,16 +204,14 @@ def print_ast(node, indent=""):
         print(f"{indent}Variable")
         print(f"{indent}  name: {node.name}")
 
-    # Add other node types as needed...
     else:
         print(f"{indent}{node.__class__.__name__}")
         for key, value in node.__dict__.items():
             print(f"{indent}  {key}: {value}")
 
 
-# ===========================
+
 # SQL PARSER
-# ===========================
 def parse_sql(code: str):
     print("========== SQL INPUT ==========")
     print(code)
@@ -250,9 +245,7 @@ def parse_sql(code: str):
     print_parse_tree(tree, parser)
     print("================================\n")
 
-    # ===========================
     # BUILD AST
-    # ===========================
     builder = ASTBuilder()
     ast = builder.visit(tree)
 
@@ -267,10 +260,9 @@ def parse_file(path: str):
     parse_sql(code)
 
 
-# ===========================
-# TEST
-# ===========================
+
+# TESTING
 if __name__ == "__main__":
     sql1 = "SELECT name, age FROM users WHERE age > 10;"
-    parse_file("test.sql")
-    # parse_sql(sql1)
+    # parse_file("Train2-1.sql")
+    parse_sql(sql1)

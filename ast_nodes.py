@@ -51,351 +51,349 @@ class ASTNode:
         return "\n".join(lines)
 
 
-# =========================
-# SQL FILE & STATEMENTS
-# =========================
 
+# SQL FILE & STATEMENTS
+# ---------------------
 class SqlFile(ASTNode):
     def __init__(self, statements):
-        self.statements = statements    # list[ASTNode]
+        self.statements = statements
 
 
-# =========================
+
 # SELECT STATEMENTS
-# =========================
+# -----------------
 
 class SelectStatement(ASTNode):
     def __init__(self, columns, from_clause=None, where=None, joins=None, group_by=None,
                  having=None, order_by=None, distinct=False, top=None):
-        self.columns = columns          # list[SelectColumn]
-        self.from_clause = from_clause  # FromClause | None
-        self.where = where              # WhereClause | None
-        self.joins = joins or []        # list[Join] - FIXED: Added joins parameter
-        self.group_by = group_by        # GroupByClause | None
-        self.having = having            # HavingClause | None
-        self.order_by = order_by        # OrderByClause | None
-        self.distinct = distinct        # bool
-        self.top = top                  # TopClause | None
+        self.columns = columns
+        self.from_clause = from_clause
+        self.where = where
+        self.joins = joins or []
+        self.group_by = group_by
+        self.having = having
+        self.order_by = order_by
+        self.distinct = distinct
+        self.top = top
 
 
 class SelectColumn(ASTNode):
     def __init__(self, expression, alias=None):
-        self.expression = expression    # Expression (Column, FunctionCall, etc.)
-        self.alias = alias              # str | None
+        self.expression = expression
+        self.alias = alias
 
 
 class FromClause(ASTNode):
     def __init__(self, tables):
-        self.tables = tables            # list[TableSource]
+        self.tables = tables
 
 
 class TableSource(ASTNode):
     def __init__(self, table_name, alias=None, joins=None):
-        self.table_name = table_name    # str
-        self.alias = alias              # str | None
-        self.joins = joins or []        # list[Join]
+        self.table_name = table_name
+        self.alias = alias
+        self.joins = joins or []
 
 
 class Join(ASTNode):
     def __init__(self, join_type, table_source, condition):
-        self.join_type = join_type      # str: "INNER", "LEFT", "RIGHT", "FULL", "CROSS"
-        self.table_source = table_source  # TableSource
-        self.condition = condition      # Expression (ON condition)
+        self.join_type = join_type
+        self.table_source = table_source
+        self.condition = condition
 
 
 class WhereClause(ASTNode):
     def __init__(self, condition):
-        self.condition = condition      # Expression
+        self.condition = condition
 
 
 class GroupByClause(ASTNode):
     def __init__(self, expressions, having=None):
-        self.expressions = expressions  # list[Expression]
-        self.having = having            # HavingClause | None
+        self.expressions = expressions
+        self.having = having
 
 
 class HavingClause(ASTNode):
     def __init__(self, condition):
-        self.condition = condition      # Expression
+        self.condition = condition
 
 
 class OrderByClause(ASTNode):
     def __init__(self, order_elements):
-        self.order_elements = order_elements  # list[OrderByElement]
+        self.order_elements = order_elements
 
 
 class OrderByElement(ASTNode):
     def __init__(self, expression, order="ASC"):
-        self.expression = expression    # Expression
-        self.order = order              # "ASC" or "DESC"
+        self.expression = expression
+        self.order = order
 
 
 class TopClause(ASTNode):
     def __init__(self, value, percent=False, with_ties=False):
-        self.value = value              # Expression (usually INT_LITERAL)
-        self.percent = percent          # bool
-        self.with_ties = with_ties      # bool
+        self.value = value
+        self.percent = percent
+        self.with_ties = with_ties
 
 
-# =========================
+
 # DML STATEMENTS
-# =========================
+# --------------
 
 class InsertStatement(ASTNode):
     def __init__(self, table, columns=None, values=None, select=None):
-        self.table = table              # str
-        self.columns = columns          # list[str] | None
-        self.values = values            # list[list[Expression]] | None (for multiple rows)
-        self.select = select            # SelectStatement | None
+        self.table = table
+        self.columns = columns
+        self.values = values
+        self.select = select
 
 
 class UpdateStatement(ASTNode):
     def __init__(self, table, assignments, from_clause=None, where=None):
-        self.table = table              # str
-        self.assignments = assignments  # list[Assignment]
-        self.from_clause = from_clause  # FromClause | None
-        self.where = where              # WhereClause | None
+        self.table = table
+        self.assignments = assignments
+        self.from_clause = from_clause
+        self.where = where
 
 
 class DeleteStatement(ASTNode):
     def __init__(self, table, where=None):
-        self.table = table              # str
-        self.where = where              # WhereClause | None
+        self.table = table
+        self.where = where
 
 
 class Assignment(ASTNode):
     def __init__(self, column, value, operator="="):
-        self.column = column            # Column
-        self.value = value              # Expression
-        self.operator = operator        # "=" or "+="
+        self.column = column
+        self.value = value
+        self.operator = operator
 
 
-# =========================
+
 # DDL STATEMENTS
-# =========================
+# --------------
 
 class CreateTableStatement(ASTNode):
     def __init__(self, table, columns, constraints=None):
-        self.table = table              # str
-        self.columns = columns          # list[ColumnDefinition]
-        self.constraints = constraints or []  # list[Constraint]
+        self.table = table
+        self.columns = columns
+        self.constraints = constraints or []
 
 
 class DropTableStatement(ASTNode):
     def __init__(self, table):
-        self.table = table              # str
+        self.table = table
 
 
 class AlterTableStatement(ASTNode):
     def __init__(self, table, action):
-        self.table = table              # str
-        self.action = action            # AlterAction
+        self.table = table
+        self.action = action
 
 
 class AlterAction(ASTNode):
     def __init__(self, action_type, column=None, constraint=None):
-        self.action_type = action_type  # "ADD", "DROP", "MODIFY", etc.
-        self.column = column            # ColumnDefinition | None
-        self.constraint = constraint    # Constraint | None
+        self.action_type = action_type
+        self.column = column
+        self.constraint = constraint
 
 
 class ColumnDefinition(ASTNode):
     def __init__(self, name, data_type, options=None, constraints=None):
-        self.name = name                # str
-        self.data_type = data_type      # str
-        self.options = options or []    # list[str]
-        self.constraints = constraints or []  # list[Constraint]
+        self.name = name
+        self.data_type = data_type
+        self.options = options or []
+        self.constraints = constraints or []
 
 
 class Constraint(ASTNode):
     def __init__(self, name, constraint_type, columns=None,
                  references_table=None, references_columns=None,
                  check_condition=None):
-        self.name = name                # str
-        self.constraint_type = constraint_type  # "PRIMARY KEY", "FOREIGN KEY", "UNIQUE", "CHECK"
-        self.columns = columns or []    # list[str]
-        self.references_table = references_table  # str | None
-        self.references_columns = references_columns or []  # list[str]
-        self.check_condition = check_condition  # Expression | None
+        self.name = name
+        self.constraint_type = constraint_type
+        self.columns = columns or []
+        self.references_table = references_table
+        self.references_columns = references_columns or []
+        self.check_condition = check_condition
 
 
-# =========================
+
 # CONTROL FLOW
-# =========================
+# ------------
 
 class TryCatchStatement(ASTNode):
     def __init__(self, try_block, catch_block):
-        self.try_block = try_block      # list[ASTNode]
-        self.catch_block = catch_block  # list[ASTNode]
+        self.try_block = try_block
+        self.catch_block = catch_block
 
 
 class Block(ASTNode):
     def __init__(self, statements):
-        self.statements = statements    # list[ASTNode]
+        self.statements = statements
 
 
 class IfStatement(ASTNode):
     def __init__(self, condition, true_block, false_block=None):
-        self.condition = condition      # Expression
-        self.true_block = true_block    # Block
-        self.false_block = false_block  # Block | None
+        self.condition = condition
+        self.true_block = true_block
+        self.false_block = false_block
 
 
-# =========================
+
 # EXPRESSIONS
-# =========================
+# -----------
 
 class Column(ASTNode):
     def __init__(self, name, table=None):
-        self.name = name                # str
-        self.table = table              # str | None (table alias)
+        self.name = name
+        self.table = table
 
 
 class Literal(ASTNode):
     def __init__(self, value, type=None):
-        self.value = value              # int, float, str, bool, None
-        self.type = type                # "INT", "FLOAT", "STRING", "BOOL", "NULL"
+        self.value = value
+        self.type = type
 
 
 class BinaryExpression(ASTNode):
     def __init__(self, left, operator, right):
-        self.left = left                # Expression
-        self.operator = operator        # str: "=", "<>", ">", "<", ">=", "<=", "+", "-", "*", "/", "AND", "OR"
-        self.right = right              # Expression
+        self.left = left
+        self.operator = operator
+        self.right = right
 
 
 class UnaryExpression(ASTNode):
     def __init__(self, operator, expression):
-        self.operator = operator        # str: "NOT", "+", "-"
-        self.expression = expression    # Expression
+        self.operator = operator
+        self.expression = expression
 
 
 class CaseExpression(ASTNode):
     def __init__(self, whens, else_expr=None):
-        self.whens = whens              # list[(condition, expr)]
-        self.else_expr = else_expr      # Expression | None
+        self.whens = whens
+        self.else_expr = else_expr
 
 
 class FunctionCall(ASTNode):
     def __init__(self, name, args, distinct=False):
-        self.name = name                # str
-        self.args = args                # list[Expression]
-        self.distinct = distinct        # bool
+        self.name = name
+        self.args = args
+        self.distinct = distinct
 
 
 class ExistsExpression(ASTNode):
     def __init__(self, subquery):
-        self.subquery = subquery        # SelectStatement
+        self.subquery = subquery
 
 
 class InExpression(ASTNode):
     def __init__(self, value, options, not_in=False):
-        self.value = value              # Expression
-        self.options = options          # list[Expression] | SelectStatement
-        self.not_in = not_in            # bool
+        self.value = value
+        self.options = options
+        self.not_in = not_in
 
 
 class BetweenExpression(ASTNode):
     def __init__(self, value, lower, upper, not_between=False):
-        self.value = value              # Expression
-        self.lower = lower              # Expression
-        self.upper = upper              # Expression
-        self.not_between = not_between  # bool
+        self.value = value
+        self.lower = lower
+        self.upper = upper
+        self.not_between = not_between
 
 
 class LikeExpression(ASTNode):
     def __init__(self, value, pattern, not_like=False):
-        self.value = value              # Expression
-        self.pattern = pattern          # Expression
-        self.not_like = not_like        # bool
+        self.value = value
+        self.pattern = pattern
+        self.not_like = not_like
 
 
 class IsNullExpression(ASTNode):
     def __init__(self, expression, not_null=False):
-        self.expression = expression    # Expression
-        self.not_null = not_null        # bool
+        self.expression = expression
+        self.not_null = not_null
 
 
-# =========================
+
 # VARIABLES & DECLARATIONS
-# =========================
+# ------------------------
 
 class Variable(ASTNode):
     def __init__(self, name):
-        self.name = name                # str (starts with @)
+        self.name = name
 
 
 class DeclareStatement(ASTNode):
     def __init__(self, variable, data_type, value=None):
-        self.variable = variable        # Variable
-        self.data_type = data_type      # str
-        self.value = value              # Expression | None
+        self.variable = variable
+        self.data_type = data_type
+        self.value = value
 
 
 class SetStatement(ASTNode):
     def __init__(self, variable, value, operator="="):
-        self.variable = variable        # Variable
-        self.value = value              # Expression
-        self.operator = operator        # "=" or "+="
+        self.variable = variable
+        self.value = value
+        self.operator = operator
 
 
-# =========================
 # OTHER STATEMENTS
-# =========================
+# ----------------
 
 class UseDatabaseStatement(ASTNode):
     def __init__(self, database_name):
-        self.database_name = database_name  # str
+        self.database_name = database_name
 
 
 class TruncateTableStatement(ASTNode):
     def __init__(self, table):
-        self.table = table              # str
+        self.table = table
 
 
 class ExecStatement(ASTNode):
     def __init__(self, procedure_name, args=None):
-        self.procedure_name = procedure_name  # str
-        self.args = args or []          # list[Expression]
+        self.procedure_name = procedure_name
+        self.args = args or []
 
 
-# =========================
+
 # CURSOR STATEMENTS
-# =========================
+# -----------------
 
 class DeclareCursor(ASTNode):
     def __init__(self, cursor_name, select_statement):
-        self.cursor_name = cursor_name  # str
-        self.select_statement = select_statement  # SelectStatement
+        self.cursor_name = cursor_name
+        self.select_statement = select_statement
 
 
 class OpenCursor(ASTNode):
     def __init__(self, cursor_name):
-        self.cursor_name = cursor_name  # str
+        self.cursor_name = cursor_name
 
 
 class FetchCursor(ASTNode):
     def __init__(self, cursor_name, into_variables=None):
-        self.cursor_name = cursor_name  # str
+        self.cursor_name = cursor_name
         self.into_variables = into_variables or []  # list[Variable]
 
 
 class CloseCursor(ASTNode):
     def __init__(self, cursor_name):
-        self.cursor_name = cursor_name  # str
+        self.cursor_name = cursor_name
 
 
-# =========================
+
 # CTE (Common Table Expression)
-# =========================
+# -----------------------------
 
 class WithClause(ASTNode):
     def __init__(self, ctes):
-        self.ctes = ctes                # list[CommonTableExpression]
+        self.ctes = ctes
 
 
 class CommonTableExpression(ASTNode):
     def __init__(self, name, columns, select_statement):
-        self.name = name                # str
-        self.columns = columns or []    # list[str]
-        self.select_statement = select_statement  # SelectStatement
+        self.name = name
+        self.columns = columns or []
+        self.select_statement = select_statement
